@@ -6,7 +6,7 @@ GFLAGS="-Wall -Wextra -Wpedantic -Werror -std=c++23"
 DFLAGS="-ggdb -fsanitize=address -fsanitize=undefined"
 RFLAGS="-O2"
 
-LDFLAGS=""
+LDFLAGS="-lraylib"
 
 CFLAGS="$GFLAGS $DFLAGS"
 if [ "$1" = "release" ]
