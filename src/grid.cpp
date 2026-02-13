@@ -81,14 +81,20 @@ void Grid::draw(void)
   }
 }
 
-void Grid::add_actor(u32 id, Coord pos, Coord target)
+bool Grid::add_actor(u32 id, Coord pos, Coord target)
 {
+  if ((*this)[pos] != 0)
+    return false;
+
   for (const auto &actor : actors)
   {
     assert(actor.id != id);
+    if (actor.id == id || (actor.pos.x == pos.x && actor.pos.y == pos.y))
+      return false;
   }
   actors.push_back({id, pos, target});
   cells[(pos.x * GRID_SIZE) + pos.y] = id;
+  return true;
 }
 
 u64 Grid::get_neighbours(u64 x, u64 y,

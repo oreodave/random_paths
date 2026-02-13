@@ -23,19 +23,24 @@ int main(void)
 
   for (u64 i = 0; i < NUM_ACTORS; ++i)
   {
-    u64 x   = rand() % GRID_SIZE;
-    u64 y   = rand() % GRID_SIZE;
-    Color c = {
-        .r = (u8)(rand() % 200 + 55),
-        .g = (u8)(rand() % 200 + 55),
-        .b = (u8)(rand() % 200 + 55),
-        .a = 255,
-    };
+    while (true)
+    {
 
-    u32 packed = 0;
-    memcpy(&packed, &c, sizeof(c));
+      u64 x   = rand() % GRID_SIZE;
+      u64 y   = rand() % GRID_SIZE;
+      Color c = {
+          .r = (u8)(rand() % 200 + 55),
+          .g = (u8)(rand() % 200 + 55),
+          .b = (u8)(rand() % 200 + 55),
+          .a = 255,
+      };
 
-    grid.add_actor(packed, {x, y}, {0, 0});
+      u32 packed = 0;
+      memcpy(&packed, &c, sizeof(c));
+
+      if (grid.add_actor(packed, {x, y}, {0, 0}))
+        break;
+    }
   }
 
   bool paused = true;

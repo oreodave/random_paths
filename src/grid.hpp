@@ -28,7 +28,7 @@ struct Grid
 
   Grid(ActorUpdateFn);
   ~Grid(void);
-  void add_actor(u32 id, Coord pos, Coord target);
+  bool add_actor(u32 id, Coord pos, Coord target);
   u32 &operator[](u64 x, u64 y) const;
   u32 &operator[](Coord p) const;
 
