@@ -36,6 +36,9 @@ struct Grid
   void update(void);
 
   u64 get_neighbours(u64 x, u64 y, std::array<pair<Coord, u32>, 4> &arr) const;
+  pair<u64, u64>
+  get_valid_neighbours(u64 x, u64 y, u32 actor_id,
+                       std::array<pair<Coord, u32>, 4> &arr) const;
 };
 
 #endif

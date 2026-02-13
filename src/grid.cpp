@@ -113,6 +113,36 @@ u64 Grid::get_neighbours(u64 x, u64 y,
   return size;
 }
 
+pair<u64, u64>
+Grid::get_valid_neighbours(u64 x, u64 y, u32 actor_id,
+                           std::array<pair<Coord, u32>, 4> &arr) const
+{
+  u64 size = get_neighbours(x, y, arr);
+
+  u64 start = 0;
+#if !ACTORS_BACKWARD_MOVEMENT
+  for (u64 i = start; i < size; ++i)
+  {
+    if (arr[i].second == actor_id)
+    {
+      std::swap(arr[start], arr[i]);
+      ++start;
+    }
+  }
+#endif
+#if !ACTORS_REPLACE_CELLS
+  for (u64 i = start; i < size; ++i)
+  {
+    if (!(arr[i].second == actor_id || arr[i].second == 0))
+    {
+      std::swap(arr[start], arr[i]);
+      ++start;
+    }
+  }
+#endif
+  return {start, size};
+}
+
 void Grid::update(void)
 {
   std::for_each(std::begin(actors), std::end(actors),

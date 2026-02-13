@@ -13,28 +13,8 @@
 void actor_random_strat(Grid &grid, Actor &actor)
 {
   std::array<pair<Coord, u32>, 4> neighbours;
-  u64 size  = grid.get_neighbours(actor.pos.x, actor.pos.y, neighbours);
-  u64 start = 0;
-#if !ACTORS_BACKWARD_MOVEMENT
-  for (u64 i = start; i < size; ++i)
-  {
-    if (neighbours[i].second == actor.id)
-    {
-      std::swap(neighbours[start], neighbours[i]);
-      ++start;
-    }
-  }
-#endif
-#if !ACTORS_REPLACE_CELLS
-  for (u64 i = start; i < size; ++i)
-  {
-    if (!(neighbours[i].second == actor.id || neighbours[i].second == 0))
-    {
-      std::swap(neighbours[start], neighbours[i]);
-      ++start;
-    }
-  }
-#endif
+  auto [start, size] =
+      grid.get_valid_neighbours(actor.pos.x, actor.pos.y, actor.id, neighbours);
   if (start == size)
     return;
 
