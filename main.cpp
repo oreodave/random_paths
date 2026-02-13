@@ -66,12 +66,12 @@ struct Grid
     delete[] cells;
   }
 
-  u32 &operator[](u64 x, u64 y)
+  u32 &operator[](u64 x, u64 y) const
   {
     return cells[(x * GRID_SIZE) + y];
   }
 
-  u32 &operator[](Coord p)
+  u32 &operator[](Coord p) const
   {
     return cells[(p.x * GRID_SIZE) + p.y];
   }
@@ -131,7 +131,7 @@ struct Grid
     cells[(pos.x * GRID_SIZE) + pos.y] = id;
   }
 
-  u64 get_neighbours(u64 x, u64 y, std::array<pair<Coord, u32>, 4> &arr)
+  u64 get_neighbours(u64 x, u64 y, std::array<pair<Coord, u32>, 4> &arr) const
   {
     assert(x < GRID_SIZE && y < GRID_SIZE);
     u64 size = 0;
@@ -146,53 +146,51 @@ struct Grid
     return size;
   }
 
-  // random strategy: pick a random cell
-  void actor_random_strat(Actor &actor)
-  {
-    std::array<pair<Coord, u32>, 4> neighbours;
-    u64 size  = get_neighbours(actor.pos.x, actor.pos.y, neighbours);
-    u64 start = 0;
-#if !ACTORS_BACKWARD_MOVEMENT
-    for (u64 i = start; i < size; ++i)
-    {
-      if (neighbours[i].second == actor.id)
-      {
-        std::swap(neighbours[start], neighbours[i]);
-        ++start;
-      }
-    }
-#endif
-#if !ACTORS_REPLACE_CELLS
-    for (u64 i = start; i < size; ++i)
-    {
-      if (!(neighbours[i].second == actor.id || neighbours[i].second == 0))
-      {
-        std::swap(neighbours[start], neighbours[i]);
-        ++start;
-      }
-    }
-#endif
-    if (start == size)
-      return;
-
-    u64 ind            = rand() % (size - start);
-    auto [coord, cell] = neighbours[ind + start];
-
-    (*this)[coord] = actor.id;
-    actor.pos      = coord;
-  }
-
-  void actor_target_strategy(Actor &actor);
-
   void update(void)
   {
     std::for_each(std::begin(actors), std::end(actors),
                   [this](auto &actor)
                   {
-                    actor_random_strat(actor);
+                    actor_random_strat(*this, actor);
                   });
   }
 };
+
+// random strategy: pick a random cell
+void actor_random_strat(const Grid &grid, Actor &actor)
+{
+  std::array<pair<Coord, u32>, 4> neighbours;
+  u64 size  = grid.get_neighbours(actor.pos.x, actor.pos.y, neighbours);
+  u64 start = 0;
+#if !ACTORS_BACKWARD_MOVEMENT
+  for (u64 i = start; i < size; ++i)
+  {
+    if (neighbours[i].second == actor.id)
+    {
+      std::swap(neighbours[start], neighbours[i]);
+      ++start;
+    }
+  }
+#endif
+#if !ACTORS_REPLACE_CELLS
+  for (u64 i = start; i < size; ++i)
+  {
+    if (!(neighbours[i].second == actor.id || neighbours[i].second == 0))
+    {
+      std::swap(neighbours[start], neighbours[i]);
+      ++start;
+    }
+  }
+#endif
+  if (start == size)
+    return;
+
+  u64 ind            = rand() % (size - start);
+  auto [coord, cell] = neighbours[ind + start];
+
+  grid[coord] = actor.id;
+  actor.pos   = coord;
+}
 
 int main(void)
 {
