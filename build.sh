@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 
-SRC="grid.cpp strats.cpp main.cpp"
+SRC="src/grid.cpp src/strats.cpp src/main.cpp"
 OUT="random_paths.out"
-GFLAGS="-Wall -Wextra -Wpedantic -Werror -std=c++23"
+GFLAGS="-Wall -Wextra -Wpedantic -Werror -std=c++23 -I./src/"
 DFLAGS="-ggdb -fsanitize=address -fsanitize=undefined"
 RFLAGS="-O2"
 
