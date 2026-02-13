@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-SRC="main.cpp"
+SRC="grid.cpp strats.cpp main.cpp"
 OUT="random_paths.out"
 GFLAGS="-Wall -Wextra -Wpedantic -Werror -std=c++23"
 DFLAGS="-ggdb -fsanitize=address -fsanitize=undefined"

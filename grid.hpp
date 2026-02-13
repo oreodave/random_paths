@@ -1,0 +1,53 @@
+/* grid.hpp: Grid definitions
+ * Created: 2026-02-13
+ * Author: Aryadev Chavali
+ * License: See end of file
+ * Commentary:
+ */
+
+#ifndef GRID_HPP
+#define GRID_HPP
+
+#include "./base.hpp"
+
+#include <array>
+#include <vector>
+
+struct Actor
+{
+  u32 id;
+  Coord pos, target;
+};
+
+struct Grid
+{
+  u32 *cells;
+  std::vector<Actor> actors;
+  using ActorUpdateFn = void (*)(Grid &grid, Actor &actor);
+  ActorUpdateFn actor_update_function;
+
+  Grid(ActorUpdateFn);
+  ~Grid(void);
+  void add_actor(u32 id, Coord pos, Coord target);
+  u32 &operator[](u64 x, u64 y) const;
+  u32 &operator[](Coord p) const;
+
+  void draw(void);
+  void update(void);
+
+  u64 get_neighbours(u64 x, u64 y, std::array<pair<Coord, u32>, 4> &arr) const;
+};
+
+#endif
+
+/* Copyright (C) 2026 Aryadev Chavali
+
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the Unlicense for details.
+
+ * You may distribute and modify this code under the terms of the Unlicense,
+ * which you should have received a copy of along with this program.  If not,
+ * please go to <https://unlicense.org/>.
+
+ */
