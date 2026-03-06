@@ -15,6 +15,7 @@
 
 struct Actor
 {
+  bool done; // true if cannot colour any further
   u32 id;
   Coord pos, target;
 };

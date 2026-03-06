@@ -12,8 +12,7 @@
 #include <optional>
 #include <tuple>
 
-template <typename T>
-using opt = std::optional<T>;
+template <typename T> using opt = std::optional<T>;
 using std::pair;
 using std::tuple;
 
