@@ -27,11 +27,6 @@ constexpr f32 DELTA_TIME = 1;
 // should actors be able to replace other cells?
 #define ACTORS_REPLACE_CELLS 0
 
-struct Coord
-{
-  u64 x, y;
-};
-
 #endif
 
 /* Copyright (C) 2026 Aryadev Chavali

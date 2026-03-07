@@ -11,6 +11,22 @@
 #include <array>
 #include <cstring>
 #include <raylib.h>
+Coord::Coord() : x{0}, y{0}
+{
+}
+
+Coord::Coord(u64 n) : x{n / GRID_SIZE}, y{n % GRID_SIZE}
+{
+}
+
+Coord::Coord(u64 x, u64 y) : x{x}, y{y}
+{
+}
+
+u64 Coord::to_abs(void)
+{
+  return (x * GRID_SIZE) + y;
+}
 
 Grid::Grid(ActorUpdateFn fn)
 {

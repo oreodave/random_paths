@@ -13,6 +13,16 @@
 #include <array>
 #include <vector>
 
+struct Coord
+{
+  u64 x, y;
+
+  Coord();
+  Coord(u64);
+  Coord(u64, u64);
+  u64 to_abs(void);
+};
+
 struct Actor
 {
   bool done; // true if cannot colour any further
