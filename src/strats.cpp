@@ -13,9 +13,9 @@
 #include <queue>
 #include <unordered_set>
 
-void actor_random_strat(Grid &grid, Actor &actor)
+void actor_random_strat(Grid &grid, Grid::Actor &actor)
 {
-  std::array<pair<Coord, u32>, 4> neighbours;
+  std::array<pair<Coord, colour_t>, 4> neighbours;
   auto [start, size] =
       grid.get_valid_neighbours(actor.pos.x, actor.pos.y, actor.id, neighbours);
   if (start == size)
@@ -28,7 +28,7 @@ void actor_random_strat(Grid &grid, Actor &actor)
   actor.pos   = coord;
 }
 
-void actor_uncoloured_strat(Grid &grid, Actor &actor)
+void actor_uncoloured_strat(Grid &grid, Grid::Actor &actor)
 {
   // Perform a BFS against neighbours until we find an uncoloured cell, then
   // move in the principal direction that allows us to get there.

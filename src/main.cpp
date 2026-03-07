@@ -35,11 +35,14 @@ int main(void)
           .a = 255,
       };
 
-      u32 packed = 0;
+      colour_t packed = 0;
       memcpy(&packed, &c, sizeof(c));
 
+      // NOTE: No target
       if (grid.add_actor(packed, {x, y}, {0, 0}))
+      {
         break;
+      }
     }
   }
 

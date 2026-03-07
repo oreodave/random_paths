@@ -23,15 +23,17 @@ struct Coord
   u64 to_abs(void);
 };
 
-struct Actor
-{
-  u32 id;
-  Coord pos, target;
-};
+using colour_t = u32;
 
 struct Grid
 {
-  u32 *cells;
+  struct Actor
+  {
+    colour_t id;
+    Coord pos, target;
+  };
+
+  colour_t *cells;
   std::vector<Actor> actors;
   using ActorUpdateFn = void (*)(Grid &grid, Actor &actor);
   ActorUpdateFn actor_update_function;
@@ -39,19 +41,23 @@ struct Grid
   Grid(ActorUpdateFn);
   ~Grid(void);
 
-  bool add_actor(u32 id, Coord pos, Coord target);
-  u32 &operator[](u64 x, u64 y) const;
-  u32 &operator[](Coord p) const;
+  bool add_actor(colour_t id, Coord pos, Coord target);
+  colour_t &operator[](u64 x, u64 y) const;
+  colour_t &operator[](Coord p) const;
 
   void draw(void);
   void update(void);
   void cull(void);
 
-  u64 get_neighbours(u64 x, u64 y, std::array<pair<Coord, u32>, 4> &arr) const;
+  u64 get_neighbours(u64 x, u64 y,
+                     std::array<pair<Coord, colour_t>, 4> &arr) const;
 
   pair<u64, u64>
-  get_valid_neighbours(u64 x, u64 y, u32 actor_id,
-                       std::array<pair<Coord, u32>, 4> &arr) const;
+  get_valid_neighbours(u64 x, u64 y, colour_t actor_id,
+                       std::array<pair<Coord, colour_t>, 4> &arr) const;
+
+  std::vector<Coord> bfs(Coord start, Coord end);
+  std::vector<Coord> bfs_if(Coord start, bool (*end_node)(Coord, colour_t));
 };
 
 #endif

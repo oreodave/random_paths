@@ -33,7 +33,7 @@ u64 Coord::to_abs(void)
 
 Grid::Grid(ActorUpdateFn fn)
 {
-  cells                 = new u32[GRID_SIZE * GRID_SIZE];
+  cells                 = new colour_t[GRID_SIZE * GRID_SIZE];
   actor_update_function = fn;
   // NOTE: Debug builds don't seem to get cleared cells of memory from heap
   // memory.  I thought C++ did this by default?  That's wild.
@@ -45,12 +45,12 @@ Grid::~Grid(void)
   delete[] cells;
 }
 
-u32 &Grid::operator[](u64 x, u64 y) const
+colour_t &Grid::operator[](u64 x, u64 y) const
 {
   return cells[(x * GRID_SIZE) + y];
 }
 
-u32 &Grid::operator[](Coord p) const
+colour_t &Grid::operator[](Coord p) const
 {
   return cells[(p.x * GRID_SIZE) + p.y];
 }
@@ -80,10 +80,10 @@ void Grid::draw(void)
   {
     for (u64 y = 0; y < GRID_SIZE; ++y)
     {
-      u64 cell_x      = (x * cell_dimension) + padding_x;
-      u64 cell_y      = (y * cell_dimension) + padding_y;
-      u32 cell_colour = (*this)[x, y];
-      Color col       = {};
+      u64 cell_x           = (x * cell_dimension) + padding_x;
+      u64 cell_y           = (y * cell_dimension) + padding_y;
+      colour_t cell_colour = (*this)[x, y];
+      Color col            = {};
       memcpy(&col, &cell_colour, sizeof(Color));
 
       DrawRectangle(cell_x, cell_y, cell_dimension, cell_dimension, col);
@@ -100,7 +100,7 @@ void Grid::draw(void)
   }
 }
 
-bool Grid::add_actor(u32 id, Coord pos, Coord target)
+bool Grid::add_actor(colour_t id, Coord pos, Coord target)
 {
   if ((*this)[pos] != 0)
     return false;
@@ -117,7 +117,7 @@ bool Grid::add_actor(u32 id, Coord pos, Coord target)
 }
 
 u64 Grid::get_neighbours(u64 x, u64 y,
-                         std::array<pair<Coord, u32>, 4> &arr) const
+                         std::array<pair<Coord, colour_t>, 4> &arr) const
 {
   assert(x < GRID_SIZE && y < GRID_SIZE);
   u64 size = 0;
@@ -133,8 +133,8 @@ u64 Grid::get_neighbours(u64 x, u64 y,
 }
 
 pair<u64, u64>
-Grid::get_valid_neighbours(u64 x, u64 y, u32 actor_id,
-                           std::array<pair<Coord, u32>, 4> &arr) const
+Grid::get_valid_neighbours(u64 x, u64 y, colour_t actor_id,
+                           std::array<pair<Coord, colour_t>, 4> &arr) const
 {
   (void)actor_id;
   u64 size = get_neighbours(x, y, arr);
@@ -207,7 +207,7 @@ void Grid::cull(void)
       }
       visited.insert(ind);
 
-      std::array<pair<Coord, u32>, 4> neighbours{};
+      std::array<pair<Coord, colour_t>, 4> neighbours{};
       auto [start, size] =
           get_valid_neighbours(coord.x, coord.y, actor.id, neighbours);
 
@@ -230,6 +230,10 @@ void Grid::cull(void)
       done_actors.push_back(i);
   }
 
+  // Once we've got a set of indices for the actors that are "done", we can now
+  // erase them.  We do this by moving all the done actors to the end of the
+  // vector, then resizing the vector, thereby "freeing" them from
+  // consideration.
   std::sort(std::begin(done_actors), std::end(done_actors));
   u64 new_size = actors.size();
   for (auto i = done_actors.size(); i > 0; --i)
