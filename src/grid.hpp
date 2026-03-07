@@ -25,7 +25,6 @@ struct Coord
 
 struct Actor
 {
-  bool done; // true if cannot colour any further
   u32 id;
   Coord pos, target;
 };
@@ -39,14 +38,17 @@ struct Grid
 
   Grid(ActorUpdateFn);
   ~Grid(void);
+
   bool add_actor(u32 id, Coord pos, Coord target);
   u32 &operator[](u64 x, u64 y) const;
   u32 &operator[](Coord p) const;
 
   void draw(void);
   void update(void);
+  void cull(void);
 
   u64 get_neighbours(u64 x, u64 y, std::array<pair<Coord, u32>, 4> &arr) const;
+
   pair<u64, u64>
   get_valid_neighbours(u64 x, u64 y, u32 actor_id,
                        std::array<pair<Coord, u32>, 4> &arr) const;

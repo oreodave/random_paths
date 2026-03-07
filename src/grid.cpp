@@ -108,7 +108,7 @@ bool Grid::add_actor(u32 id, Coord pos, Coord target)
     if (actor.id == id || (actor.pos.x == pos.x && actor.pos.y == pos.y))
       return false;
   }
-  actors.push_back({false, id, pos, target});
+  actors.push_back({id, pos, target});
   cells[(pos.x * GRID_SIZE) + pos.y] = id;
   return true;
 }
@@ -133,6 +133,7 @@ pair<u64, u64>
 Grid::get_valid_neighbours(u64 x, u64 y, u32 actor_id,
                            std::array<pair<Coord, u32>, 4> &arr) const
 {
+  (void)actor_id;
   u64 size = get_neighbours(x, y, arr);
 
   u64 start = 0;
@@ -161,13 +162,12 @@ Grid::get_valid_neighbours(u64 x, u64 y, u32 actor_id,
 
 void Grid::update(void)
 {
+  // Perform a cull
+  cull();
   std::for_each(std::begin(actors), std::end(actors),
                 [this](auto &actor)
                 {
-                  if (!actor.done)
-                  {
-                    this->actor_update_function(*this, actor);
-                  }
+                  this->actor_update_function(*this, actor);
                 });
 }
 
