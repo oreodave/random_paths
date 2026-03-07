@@ -36,13 +36,13 @@ struct Grid
     Coord pos, target;
     std::vector<Coord> path;
   };
+  using actor_update_fn = std::function<void(Grid &grid, Actor &actor)>;
 
   colour_t *cells;
   std::vector<Actor> actors;
-  using ActorUpdateFn = void (*)(Grid &grid, Actor &actor);
-  ActorUpdateFn actor_update_function;
+  actor_update_fn actor_update_function;
 
-  Grid(ActorUpdateFn);
+  Grid(actor_update_fn);
   ~Grid(void);
 
   bool add_actor(colour_t id, Coord pos, Coord target);

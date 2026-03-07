@@ -36,7 +36,7 @@ u64 Coord::to_abs(void)
   return (x * GRID_SIZE) + y;
 }
 
-Grid::Grid(ActorUpdateFn fn)
+Grid::Grid(actor_update_fn fn)
 {
   cells                 = new colour_t[GRID_SIZE * GRID_SIZE];
   actor_update_function = fn;
