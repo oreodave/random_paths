@@ -26,6 +26,11 @@ Coord::Coord(u64 x, u64 y) : x{x}, y{y}
 {
 }
 
+bool Coord::operator==(Coord other)
+{
+  return x == other.x && y == other.y;
+}
+
 u64 Coord::to_abs(void)
 {
   return (x * GRID_SIZE) + y;

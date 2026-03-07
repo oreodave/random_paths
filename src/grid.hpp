@@ -21,6 +21,8 @@ struct Coord
   Coord(u64);
   Coord(u64, u64);
   u64 to_abs(void);
+
+  bool operator==(Coord);
 };
 
 using colour_t = u32;
