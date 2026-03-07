@@ -9,6 +9,7 @@
 #include "grid.hpp"
 #include "strats.hpp"
 
+#include <cmath>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
@@ -21,25 +22,38 @@ int main(void)
   srand(time(NULL));
   Grid grid{actor_spread_strat};
 
+  const Coord edges[] = {
+      Coord{0, GRID_SIZE / 2},
+      Coord{GRID_SIZE / 2, 0},
+      Coord{GRID_SIZE - 1, GRID_SIZE / 2},
+      Coord{GRID_SIZE / 2, GRID_SIZE - 1},
+  };
+
   for (u64 i = 0; i < NUM_ACTORS; ++i)
   {
     while (true)
     {
-
-      u64 x   = rand() % GRID_SIZE;
-      u64 y   = rand() % GRID_SIZE;
-      Color c = {
-          .r = (u8)(rand() % 200 + 55),
-          .g = (u8)(rand() % 200 + 55),
-          .b = (u8)(rand() % 200 + 55),
-          .a = 255,
+      // u64 x   = rand() % GRID_SIZE;
+      // u64 y   = rand() % GRID_SIZE;
+      auto pos     = edges[i % 4];
+      u64 x_offset = rand() % (GRID_SIZE);
+      u64 y_offset = rand() % (GRID_SIZE);
+      pos.x        = (pos.x + x_offset) % GRID_SIZE;
+      pos.y        = (pos.y + y_offset) % GRID_SIZE;
+      u64 x        = pos.x;
+      u64 y        = pos.y;
+      Color c      = {
+               .r = (u8)(rand() % 200 + 55),
+               .g = (u8)(rand() % 200 + 55),
+               .b = (u8)(rand() % 200 + 55),
+               .a = 255,
       };
 
       colour_t packed = 0;
       memcpy(&packed, &c, sizeof(c));
 
       // NOTE: No target
-      if (grid.add_actor(packed, {x, y}, {0, 0}))
+      if (grid.add_actor(packed, {(u64)x, (u64)y}, {0, 0}))
       {
         break;
       }
