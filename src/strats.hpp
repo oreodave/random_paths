@@ -11,7 +11,6 @@
 #include "grid.hpp"
 
 void actor_random_strat(Grid &grid, Grid::Actor &actor);
-void actor_uncoloured_strat(Grid &grid, Grid::Actor &actor);
 
 #endif
 
