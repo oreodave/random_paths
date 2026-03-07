@@ -230,10 +230,12 @@ void Grid::cull(void)
       done_actors.push_back(i);
   }
 
+  std::sort(std::begin(done_actors), std::end(done_actors));
   u64 new_size = actors.size();
-  for (const auto actor_index : done_actors)
+  for (auto i = done_actors.size(); i > 0; --i)
   {
     --new_size;
+    auto actor_index = done_actors[i - 1];
     std::swap(actors[actor_index], actors[new_size]);
   }
   actors.resize(new_size);
