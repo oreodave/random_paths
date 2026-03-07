@@ -58,8 +58,8 @@ struct Grid
   get_valid_neighbours(u64 x, u64 y, colour_t actor_id,
                        std::array<pair<Coord, colour_t>, 4> &arr) const;
 
-  std::vector<Coord> bfs(Coord start, Coord end);
-  std::vector<Coord> bfs_if(Coord start, bool (*end_node)(Coord, colour_t));
+  std::vector<std::vector<Coord>> bfs_if(const Actor &actor,
+                                         bool (*end_node)(Coord, colour_t));
 };
 
 #endif
