@@ -10,7 +10,10 @@
 #include <algorithm>
 #include <array>
 #include <cstring>
+#include <queue>
 #include <raylib.h>
+#include <unordered_set>
+
 Coord::Coord() : x{0}, y{0}
 {
 }
@@ -169,6 +172,71 @@ void Grid::update(void)
                 {
                   this->actor_update_function(*this, actor);
                 });
+}
+
+void Grid::cull(void)
+{
+  std::vector<size_t> done_actors;
+  for (size_t i = 0; i < actors.size(); ++i)
+  {
+    /*
+    An actor cannot move any further (i.e. may be culled) if there are no paths
+    from it that lead to an uncoloured cell.
+
+    To verify this, we need to perform a BFS (with visited map) from the current
+    position.  At each node, we look at the valid neighbours.  If one of those
+    neighbours is uncoloured, this actor cannot be culled.  Otherwise, inspect
+    all valid neighbours in a recursive manner.
+    */
+
+    const auto &actor = actors[i];
+    std::unordered_set<u64> visited;
+    std::queue<Coord> queue;
+    bool done = true;
+
+    queue.push(actor.pos);
+    while (!queue.empty() && done)
+    {
+      auto coord = queue.front();
+      queue.pop();
+      auto ind = coord.to_abs();
+      if (visited.find(ind) != std::end(visited))
+      {
+        // Skip if we've already visited this
+        continue;
+      }
+      visited.insert(ind);
+
+      std::array<pair<Coord, u32>, 4> neighbours{};
+      auto [start, size] =
+          get_valid_neighbours(coord.x, coord.y, actor.id, neighbours);
+
+      for (u64 i = start; i < size; ++i)
+      {
+        auto [coord, colour] = neighbours[i];
+        if (colour != actor.id)
+        {
+          done = false;
+          break;
+        }
+        else
+        {
+          queue.push(coord);
+        }
+      }
+    }
+
+    if (done)
+      done_actors.push_back(i);
+  }
+
+  u64 new_size = actors.size();
+  for (const auto actor_index : done_actors)
+  {
+    --new_size;
+    std::swap(actors[actor_index], actors[new_size]);
+  }
+  actors.resize(new_size);
 }
 
 /* Copyright (C) 2026 Aryadev Chavali
