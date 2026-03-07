@@ -1,0 +1,9 @@
+* TODO Cache BFS trees generated during culling on players
+[[file:src/strats.cpp::74][actor_spread_strat]] generates a BFS tree
+for the player in question, and uses it to decide the next step.
+
+[[file:src/grid.cpp::224][Grid::cull]] generates a BFS tree to see if
+an actor has some path to a cell that it hasn't claimed yet - if it
+doesn't, it is "done".
+
+Those two walks are doing much the same thing.  We can combine them.
