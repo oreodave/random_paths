@@ -116,7 +116,7 @@ bool Grid::add_actor(colour_t id, Coord pos, Coord target)
     if (actor.id == id || (actor.pos.x == pos.x && actor.pos.y == pos.y))
       return false;
   }
-  actors.push_back({id, pos, target});
+  actors.push_back({id, pos, target, {}});
   cells[(pos.x * GRID_SIZE) + pos.y] = id;
   return true;
 }
@@ -168,8 +168,9 @@ Grid::get_valid_neighbours(u64 x, u64 y, colour_t actor_id,
   return {start, size};
 }
 
-std::vector<std::vector<Coord>> Grid::bfs_if(const Actor &actor,
-                                             bool (*end_node)(Coord, colour_t))
+std::vector<std::vector<Coord>>
+Grid::bfs_if(const Actor &actor,
+             std::function<bool(const Actor &, Coord, colour_t)> end_node)
 {
   std::vector<std::vector<Coord>> paths;
   std::unordered_set<u64> visited;
@@ -187,7 +188,7 @@ std::vector<std::vector<Coord>> Grid::bfs_if(const Actor &actor,
 
     // If the current coordinate is an end node, add it to our general path
     // vector and stop BFS'ing here.
-    if (end_node(coord, (*this)[coord]))
+    if (end_node(actor, coord, (*this)[coord]))
     {
       paths.push_back(std::move(path));
       continue;

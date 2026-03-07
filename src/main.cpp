@@ -19,7 +19,7 @@
 int main(void)
 {
   srand(time(NULL));
-  Grid grid{actor_random_strat};
+  Grid grid{actor_spread_strat};
 
   for (u64 i = 0; i < NUM_ACTORS; ++i)
   {

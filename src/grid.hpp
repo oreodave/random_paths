@@ -11,6 +11,7 @@
 #include "./base.hpp"
 
 #include <array>
+#include <functional>
 #include <vector>
 
 struct Coord
@@ -33,6 +34,7 @@ struct Grid
   {
     colour_t id;
     Coord pos, target;
+    std::vector<Coord> path;
   };
 
   colour_t *cells;
@@ -58,8 +60,9 @@ struct Grid
   get_valid_neighbours(u64 x, u64 y, colour_t actor_id,
                        std::array<pair<Coord, colour_t>, 4> &arr) const;
 
-  std::vector<std::vector<Coord>> bfs_if(const Actor &actor,
-                                         bool (*end_node)(Coord, colour_t));
+  std::vector<std::vector<Coord>>
+  bfs_if(const Actor &actor,
+         std::function<bool(const Actor &, Coord, colour_t)> end_node);
 };
 
 #endif

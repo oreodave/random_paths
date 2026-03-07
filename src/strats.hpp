@@ -10,7 +10,11 @@
 
 #include "grid.hpp"
 
+// randomly pick a valid direction
 void actor_random_strat(Grid &grid, Grid::Actor &actor);
+
+// pick a path that leads to an uncoloured node, and follow it.
+void actor_spread_strat(Grid &grid, Grid::Actor &actor);
 
 #endif
 
