@@ -66,6 +66,8 @@ struct Grid
       std::function<bool(const Actor &, Coord, colour_t)> end_node);
 };
 
+bool end_unclaimed_node(const Grid::Actor &actor, Coord, colour_t);
+
 #endif
 
 /* Copyright (C) 2026 Aryadev Chavali

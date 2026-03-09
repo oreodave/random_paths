@@ -200,12 +200,6 @@ void Grid::update(void)
 
 void Grid::cull(void)
 {
-  auto end_node = [](const Actor &actor, Coord coord, colour_t colour)
-  {
-    (void)actor;
-    (void)coord;
-    return colour == 0;
-  };
   std::vector<size_t> done_actors;
 
   for (size_t i = 0; i < actors.size(); ++i)
@@ -221,7 +215,7 @@ void Grid::cull(void)
     */
 
     const auto &actor = actors[i];
-    auto coord        = bfs_find_first_candidate(actor, end_node);
+    auto coord        = bfs_find_first_candidate(actor, end_unclaimed_node);
 
     if (!coord.has_value())
     {
@@ -242,6 +236,13 @@ void Grid::cull(void)
     std::swap(actors[actor_index], actors[new_size]);
   }
   actors.resize(new_size);
+}
+
+bool end_unclaimed_node(const Grid::Actor &actor, Coord coord, colour_t colour)
+{
+  (void)actor;
+  (void)coord;
+  return colour == 0;
 }
 
 /* Copyright (C) 2026 Aryadev Chavali
