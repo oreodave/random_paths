@@ -71,66 +71,6 @@ void actor_step_in_path(Grid &grid, Grid::Actor &actor)
   }
 }
 
-void actor_spread_strat(Grid &grid, Grid::Actor &actor)
-{
-  if (validate_actor_path(grid, actor))
-  {
-    // Our cached path is still valid, move to the next step of it
-    actor_step_in_path(grid, actor);
-    return;
-  }
-  auto paths =
-      grid.bfs_if(actor,
-                  [](const Grid::Actor &actor, Coord coord, colour_t colour)
-                  {
-                    (void)coord;
-                    (void)actor;
-#if ACTOR_REPLACE_CELLS
-                    return colour != actor.id;
-#elif ACTOR_BACKWARD_MOVEMENT
-                    return colour == actor.id || colour == 0;
-#else
-                    return colour == 0;
-#endif
-                  });
-  if (paths.size() == 0)
-  {
-    // Nothing we can do - end of the line.
-    return;
-  }
-  else if (paths.size() == 1)
-  {
-    // No need to score here, do the job!
-    actor.path = std::move(paths[0]);
-    actor_step_in_path(grid, actor);
-    return;
-  }
-
-  // We have move than one path to follow, so we'll need to score them and
-  // choose the best one.  Score paths based on size, then randomly pick between
-  // the best scored.
-  u64 score = -1;
-  for (const auto &path : paths)
-  {
-    score = std::min(path.size(), score);
-  }
-
-  // Inplace reduce
-  u64 best_paths_size = 0;
-  for (u64 i = 0; i < paths.size(); ++i)
-  {
-    if (paths[i].size() == score)
-    {
-      std::swap(paths[i], paths[best_paths_size]);
-      best_paths_size++;
-    }
-  }
-
-  // Not possible for best_paths_size to be 0, must be at least 1.
-  actor.path = std::move(paths[rand() % best_paths_size]);
-  actor_step_in_path(grid, actor);
-}
-
 /* Copyright (C) 2026 Aryadev Chavali
 
  * This program is distributed in the hope that it will be useful, but WITHOUT
