@@ -152,7 +152,7 @@ Grid::get_valid_neighbours(u64 x, u64 y, colour_t actor_id,
   return {start, size};
 }
 
-bool Grid::bfs_path_exists(
+std::optional<Coord> Grid::bfs_find_first_candidate(
     const Actor &actor,
     std::function<bool(const Actor &, Coord, colour_t)> end_node)
 {
@@ -168,7 +168,7 @@ bool Grid::bfs_path_exists(
     visited.insert(coord.to_abs());
     if (end_node(actor, coord, (*this)[coord]))
     {
-      return true;
+      return coord;
     }
 
     std::array<pair<Coord, colour_t>, 4> neighbours;
@@ -180,7 +180,7 @@ bool Grid::bfs_path_exists(
       to_visit.push(next_coord);
     }
   }
-  return false;
+  return std::nullopt;
 }
 
 void Grid::update(void)
@@ -215,8 +215,9 @@ void Grid::cull(void)
     */
 
     const auto &actor = actors[i];
+    auto coord        = bfs_find_first_candidate(actor, end_node);
 
-    if (!bfs_path_exists(actor, end_node))
+    if (!coord.has_value())
     {
       done_actors.push_back(i);
     }
