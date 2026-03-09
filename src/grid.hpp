@@ -64,6 +64,10 @@ struct Grid
   std::optional<Coord> bfs_find_first_candidate(
       const Actor &actor,
       std::function<bool(const Actor &, Coord, colour_t)> end_node);
+
+  std::vector<Coord> bfs_find_all_candidates(
+      const Actor &actor,
+      std::function<bool(const Actor &, Coord, colour_t)> end_node);
 };
 
 bool end_unclaimed_node(const Grid::Actor &actor, Coord, colour_t);

@@ -189,6 +189,39 @@ std::optional<Coord> Grid::bfs_find_first_candidate(
   return std::nullopt;
 }
 
+std::vector<Coord> Grid::bfs_find_all_candidates(
+    const Actor &actor,
+    std::function<bool(const Actor &, Coord, colour_t)> end_node)
+{
+  std::vector<Coord> end_nodes;
+  std::unordered_set<u64> visited;
+  std::queue<Coord> to_visit;
+  to_visit.push(actor.pos);
+  while (!to_visit.empty())
+  {
+    auto coord = to_visit.front();
+    to_visit.pop();
+    if (visited.find(coord.to_abs()) != visited.end())
+      continue;
+    visited.insert(coord.to_abs());
+    if (end_node(actor, coord, (*this)[coord]))
+    {
+      end_nodes.push_back(coord);
+      continue;
+    }
+
+    std::array<pair<Coord, colour_t>, 4> neighbours;
+    auto [start, size] =
+        get_valid_neighbours(coord.x, coord.y, actor.id, neighbours);
+    for (auto i = start; i < size; ++i)
+    {
+      auto [next_coord, _] = neighbours[i];
+      to_visit.push(next_coord);
+    }
+  }
+  return end_nodes;
+}
+
 void Grid::update(void)
 {
   std::for_each(std::begin(actors), std::end(actors),
