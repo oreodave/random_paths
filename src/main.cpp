@@ -20,7 +20,7 @@
 int main(void)
 {
   srand(time(NULL));
-  Grid grid{actor_spread_strat};
+  Grid grid{actor_random_strat};
 
   const Coord edges[] = {
       Coord{0, GRID_SIZE / 2},
