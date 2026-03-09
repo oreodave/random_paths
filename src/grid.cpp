@@ -60,33 +60,17 @@ colour_t &Grid::operator[](Coord p) const
   return cells[(p.x * GRID_SIZE) + p.y];
 }
 
-tuple<u64, u64, u64> get_cell_dimensions(void)
-{
-  /*
-    How do we want to draw cells?
-    - We definitely want them square
-    - We want some padding from the edges of the screen for cleanliness.
-   */
-
-  // we take the smaller of the two pixels per cell as our overall size.
-  u64 cell_dimension =
-      std::min((WIDTH / 1.5) / GRID_SIZE, (HEIGHT / 1.5) / GRID_SIZE);
-  u64 padding_x = (WIDTH - (cell_dimension * GRID_SIZE)) / 2;
-  u64 padding_y = (HEIGHT - (cell_dimension * GRID_SIZE)) / 2;
-
-  return {cell_dimension, padding_x, padding_y};
-}
-
 void Grid::draw(void)
 {
-  auto [cell_dimension, padding_x, padding_y] = get_cell_dimensions();
+  constexpr auto cell_dimension =
+      std::min(WIDTH / GRID_SIZE, HEIGHT / GRID_SIZE);
 
   for (u64 x = 0; x < GRID_SIZE; ++x)
   {
     for (u64 y = 0; y < GRID_SIZE; ++y)
     {
-      u64 cell_x           = (x * cell_dimension) + padding_x;
-      u64 cell_y           = (y * cell_dimension) + padding_y;
+      u64 cell_x           = (x * cell_dimension);
+      u64 cell_y           = (y * cell_dimension);
       colour_t cell_colour = (*this)[x, y];
       Color col            = {};
       memcpy(&col, &cell_colour, sizeof(Color));
@@ -99,8 +83,8 @@ void Grid::draw(void)
 
   for (const auto &actor : actors)
   {
-    u64 x = (actor.pos.x * cell_dimension) + padding_x;
-    u64 y = (actor.pos.y * cell_dimension) + padding_y;
+    u64 x = (actor.pos.x * cell_dimension);
+    u64 y = (actor.pos.y * cell_dimension);
     DrawRectangleLines(x, y, cell_dimension, cell_dimension, BLUE);
   }
 }
