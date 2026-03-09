@@ -23,7 +23,9 @@ struct Coord
   Coord(u64, u64);
   u64 to_abs(void);
 
-  bool operator==(Coord);
+  bool operator==(Coord) const;
+  // Manhattan distance
+  u64 operator||(Coord) const;
 };
 
 using colour_t = u32;

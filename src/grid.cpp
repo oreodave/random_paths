@@ -26,9 +26,15 @@ Coord::Coord(u64 x, u64 y) : x{x}, y{y}
 {
 }
 
-bool Coord::operator==(Coord other)
+bool Coord::operator==(Coord other) const
 {
   return x == other.x && y == other.y;
+}
+
+u64 Coord::operator||(Coord other) const
+{
+  return (std::max(x, other.x) - std::min(x, other.x)) +
+         (std::max(y, other.y) - std::min(y, other.y));
 }
 
 u64 Coord::to_abs(void)
