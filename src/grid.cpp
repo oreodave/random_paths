@@ -102,7 +102,6 @@ bool Grid::add_actor(colour_t id, Coord pos, Coord target)
 
   for (const auto &actor : actors)
   {
-    assert(actor.id != id);
     if (actor.id == id || (actor.pos.x == pos.x && actor.pos.y == pos.y))
       return false;
   }
