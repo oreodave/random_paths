@@ -60,9 +60,9 @@ struct Grid
   get_valid_neighbours(u64 x, u64 y, colour_t actor_id,
                        std::array<pair<Coord, colour_t>, 4> &arr) const;
 
-  std::vector<std::vector<Coord>>
-  bfs_if(const Actor &actor,
-         std::function<bool(const Actor &, Coord, colour_t)> end_node);
+  bool
+  bfs_path_exists(const Actor &actor,
+                  std::function<bool(const Actor &, Coord, colour_t)> end_node);
 };
 
 #endif

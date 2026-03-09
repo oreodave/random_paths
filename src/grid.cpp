@@ -168,53 +168,39 @@ Grid::get_valid_neighbours(u64 x, u64 y, colour_t actor_id,
   return {start, size};
 }
 
-std::vector<std::vector<Coord>>
-Grid::bfs_if(const Actor &actor,
-             std::function<bool(const Actor &, Coord, colour_t)> end_node)
+bool Grid::bfs_path_exists(
+    const Actor &actor,
+    std::function<bool(const Actor &, Coord, colour_t)> end_node)
 {
-  std::vector<std::vector<Coord>> paths;
   std::unordered_set<u64> visited;
-  std::queue<std::pair<Coord, std::vector<Coord>>> to_visit;
-
-  to_visit.push({actor.pos, {}});
+  std::queue<Coord> to_visit;
+  to_visit.push(actor.pos);
   while (!to_visit.empty())
   {
-    auto [coord, path] = std::move(to_visit.front());
+    auto coord = to_visit.front();
     to_visit.pop();
-    // Skip if we've already visited
-    if (visited.find(coord.to_abs()) != std::end(visited))
+    if (visited.find(coord.to_abs()) != visited.end())
       continue;
     visited.insert(coord.to_abs());
-
-    // If the current coordinate is an end node, add it to our general path
-    // vector and stop BFS'ing here.
     if (end_node(actor, coord, (*this)[coord]))
     {
-      paths.push_back(std::move(path));
-      continue;
+      return true;
     }
 
-    // We've not visited this node before, and it isn't an end_node, so add its
-    // neighbours to our consideration for paths.
     std::array<pair<Coord, colour_t>, 4> neighbours;
     auto [start, size] =
         get_valid_neighbours(coord.x, coord.y, actor.id, neighbours);
     for (auto i = start; i < size; ++i)
     {
       auto [next_coord, _] = neighbours[i];
-      auto next_path       = path;
-      next_path.push_back(next_coord);
-      to_visit.push({next_coord, next_path});
+      to_visit.push(next_coord);
     }
   }
-
-  return paths;
+  return false;
 }
 
 void Grid::update(void)
 {
-  // Perform a cull
-  cull();
   std::for_each(std::begin(actors), std::end(actors),
                 [this](auto &actor)
                 {
@@ -224,7 +210,14 @@ void Grid::update(void)
 
 void Grid::cull(void)
 {
+  auto end_node = [](const Actor &actor, Coord coord, colour_t colour)
+  {
+    (void)actor;
+    (void)coord;
+    return colour == 0;
+  };
   std::vector<size_t> done_actors;
+
   for (size_t i = 0; i < actors.size(); ++i)
   {
     /*
@@ -238,44 +231,11 @@ void Grid::cull(void)
     */
 
     const auto &actor = actors[i];
-    std::unordered_set<u64> visited;
-    std::queue<Coord> queue;
-    bool done = true;
 
-    queue.push(actor.pos);
-    while (!queue.empty() && done)
+    if (!bfs_path_exists(actor, end_node))
     {
-      auto coord = queue.front();
-      queue.pop();
-      auto ind = coord.to_abs();
-      if (visited.find(ind) != std::end(visited))
-      {
-        // Skip if we've already visited this
-        continue;
-      }
-      visited.insert(ind);
-
-      std::array<pair<Coord, colour_t>, 4> neighbours{};
-      auto [start, size] =
-          get_valid_neighbours(coord.x, coord.y, actor.id, neighbours);
-
-      for (u64 i = start; i < size; ++i)
-      {
-        auto [coord, colour] = neighbours[i];
-        if (colour != actor.id)
-        {
-          done = false;
-          break;
-        }
-        else
-        {
-          queue.push(coord);
-        }
-      }
-    }
-
-    if (done)
       done_actors.push_back(i);
+    }
   }
 
   // Once we've got a set of indices for the actors that are "done", we can now
