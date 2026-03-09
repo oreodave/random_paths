@@ -12,6 +12,8 @@
 
 // randomly pick a valid direction
 void actor_random_strat(Grid &grid, Grid::Actor &actor);
+// teleport to the closest unclaimed cell that has a valid path to it
+void actor_teleport_strat(Grid &grid, Grid::Actor &actor);
 
 #endif
 
