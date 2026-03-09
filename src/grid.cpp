@@ -100,7 +100,7 @@ bool Grid::add_actor(colour_t id, Coord pos, Coord target)
     if (actor.id == id || (actor.pos.x == pos.x && actor.pos.y == pos.y))
       return false;
   }
-  actors.push_back({id, pos, target, {}});
+  actors.push_back({id, pos, target});
   cells[(pos.x * GRID_SIZE) + pos.y] = id;
   return true;
 }

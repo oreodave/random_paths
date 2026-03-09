@@ -34,7 +34,6 @@ struct Grid
   {
     colour_t id;
     Coord pos, target;
-    std::vector<Coord> path;
   };
   using actor_update_fn = std::function<void(Grid &grid, Actor &actor)>;
 
