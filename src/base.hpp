@@ -21,6 +21,7 @@ constexpr u64 HEIGHT     = 1024;
 constexpr u64 GRID_SIZE  = 64;
 constexpr u64 NUM_ACTORS = 64;
 constexpr f32 DELTA_TIME = 1;
+constexpr u64 DELTA_CULL = 5;
 
 // should actors be allowed to go back on themselves?
 #define ACTORS_BACKWARD_MOVEMENT 1

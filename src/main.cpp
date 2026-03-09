@@ -61,8 +61,9 @@ int main(void)
   }
 
   bool paused = true;
+  u64 ticks   = 0;
   f32 timer   = 0;
-  (void)timer;
+
   InitWindow(WIDTH, HEIGHT, "Random Paths");
   SetTargetFPS(60);
   while (!WindowShouldClose())
@@ -79,6 +80,11 @@ int main(void)
     timer += 1 / GetFrameTime();
     if (timer > DELTA_TIME && !paused)
     {
+      ++ticks;
+      if (ticks >= DELTA_CULL)
+      {
+        grid.cull();
+      }
       grid.update();
       timer = 0;
     }
